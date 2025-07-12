@@ -82,54 +82,54 @@ public class BlogApiControllerTest {
     @DisplayName("findAllArticles Test")
     @Test
     public void findAllArticles() throws Exception {
-        //given
+        // given
         final String url = "/api/articles";
         final String title = "title";
         final String content = "content";
 
-        //Article 하나를 DB에 직접 저장
+        // Article 하나를 DB에 직접 저장
         blogRepository.save(Article.builder()
                 .title(title)
                 .content(content)
                 .build());
 
-        //when
-        //GET /api/articles 요청을 보내기
-        //accept(MediaType.APPLICATION_JSON)은 JSON 형식으로 응답받기를 기대한다는 의미
+        // when
+        // GET /api/articles 요청을 보내기
         final ResultActions resultActions = mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON));
 
-        //then
+        // then
         resultActions
                 .andExpect(status().isOk())
-                //첫 번째 요소의 content, title 값을 검증
-                .andExpect(jsonPath("$[0].content").value(content))
-                .andExpect(jsonPath("$[0].title").value(title));
+                // response의 data 필드 내부의 첫 번째 요소 검증
+                .andExpect(jsonPath("$.data[0].content").value(content))
+                .andExpect(jsonPath("$.data[0].title").value(title));
     }
 
     @DisplayName("findArticle Test")
     @Test
     public void findArticle() throws Exception {
-        //given
+        // given
         final String url = "/api/articles/{id}";
         final String title = "title";
         final String content = "content";
 
-        //Article 하나를 DB에 직접 저장
+        // Article 하나를 DB에 직접 저장
         Article savedArticle = blogRepository.save(Article.builder()
                 .title(title)
                 .content(content)
                 .build());
 
-        //when
+        // when
         ResultActions resultActions = mockMvc.perform(get(url, savedArticle.getId()));
 
-        //then
+        // then
         resultActions
                 .andExpect(status().isOk())
-                //첫 번째 요소의 content, title 값을 검증
-                .andExpect(jsonPath("$.content").value(content))
-                .andExpect(jsonPath("$.title").value(title));
+                // response의 data 필드 내부의 content와 title 검증
+                .andExpect(jsonPath("$.data.content").value(content))
+                .andExpect(jsonPath("$.data.title").value(title));
     }
+
 
     @DisplayName("deleteArticle Test")
     @Test
